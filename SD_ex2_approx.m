@@ -140,12 +140,13 @@ save('Exp2_Jacob.mat','Jacob_F_V','Der_F_del1','Der_F_del2');
 clear all
 load('Exp2_Jacob.mat')
 load('Ex2_sol.mat')
-
+%load('Ex2_sol_fine.mat')
 %%
-del_1=0.005;
-del_2=0.005;
-delta1=-0.0:del_1:0.05;
-delta2=-0.0:del_2:0.05;
+
+delta1=(-0.05:0.005:0.05);
+delta2=(-0.05:0.005:0.05);
+del_1=delta1(2)-delta1(1);
+del_2=delta2(2)-delta2(1);
 L1=length(delta1);
 L2=length(delta2);
 m_n=zeros(L1,L2);
@@ -154,7 +155,7 @@ y_2=zeros(L1,L2);
 x_11=zeros(L1,L2);
 x_12=zeros(L1,L2);
 x_13=zeros(L1,L2);
-x_22=zeros(L1,L2);
+x_22=zeros(L1,L2);z`
 x_23=zeros(L1,L2);
 x_33=zeros(L1,L2);
 s_11=zeros(L1,L2);
@@ -163,36 +164,74 @@ s_13=zeros(L1,L2);
 s_22=zeros(L1,L2);
 s_23=zeros(L1,L2);
 s_33=zeros(L1,L2);
-m_n(1,:)=sol(11,11:21,1);
-m_n(:,1)=sol(11:21,11,1);
-y_1(1,:)=sol(11,11:21,2);
-y_1(:,1)=sol(11:21,11,2);
-y_2(1,:)=sol(11,11:21,3);
-y_2(:,1)=sol(11:21,11,3);
-s_11(1,:)=sol(11,11:21,4);
-s_11(:,1)=sol(11:21,11,4);
-s_12(1,:)=sol(11,11:21,5);
-s_12(:,1)=sol(11:21,11,5);
-s_13(1,:)=sol(11,11:21,6);
-s_13(:,1)=sol(11:21,11,6);
-s_22(1,:)=sol(11,11:21,7);
-s_22(:,1)=sol(11:21,11,7);
-s_23(1,:)=sol(11,11:21,8);
-s_23(:,1)=sol(11:21,11,8);
-s_33(1,:)=sol(11,11:21,9);
-s_33(:,1)=sol(11:21,11,9);
-x_11(1,:)=sol(11,11:21,10);
-x_11(:,1)=sol(11:21,11,10);
-x_12(1,:)=sol(11,11:21,11);
-x_12(:,1)=sol(11:21,11,11);
-x_13(1,:)=sol(11,11:21,12);
-x_13(:,1)=sol(11:21,11,12);
-x_22(1,:)=sol(11,11:21,13);
-x_22(:,1)=sol(11:21,11,13);
-x_23(1,:)=sol(11,11:21,14);
-x_23(:,1)=sol(11:21,11,14);
-x_33(1,:)=sol(11,11:21,15);
-x_33(:,1)=sol(11:21,11,15);
+ind1=1;ind2=1;
+%Scheme boundary delta1(ind1) with delta2(ind2:end) and delta2(ind1) with
+%delta1(ind2:end)
+%sol=zeros(L1,L2,15);
+%sol(1,:,:)=sol_del2(1,:,:);
+%sol(:,1,:)=sol_del1(:,1,:);
+m_n(1,:)=sol(ind1,ind2:end,1);
+m_n(:,1)=sol(ind2:end,ind1,1);
+y_1(1,:)=sol(ind1,ind2:end,2);
+y_1(:,1)=sol(ind2:end,ind1,2);
+y_2(1,:)=sol(ind1,ind2:end,3);
+y_2(:,1)=sol(ind2:end,ind1,3);
+s_11(1,:)=sol(ind1,ind2:end,4);
+s_11(:,1)=sol(ind2:end,ind1,4);
+s_12(1,:)=sol(ind1,ind2:end,5);
+s_12(:,1)=sol(ind2:end,ind1,5);
+s_13(1,:)=sol(ind1,ind2:end,6);
+s_13(:,1)=sol(ind2:end,ind1,6);
+s_22(1,:)=sol(ind1,ind2:end,7);
+s_22(:,1)=sol(ind2:end,ind1,7);
+s_23(1,:)=sol(ind1,ind2:end,8);
+s_23(:,1)=sol(ind2:end,ind1,8);
+s_33(1,:)=sol(ind1,ind2:end,9);
+s_33(:,1)=sol(ind2:end,ind1,9);
+x_11(1,:)=sol(ind1,ind2:end,10);
+x_11(:,1)=sol(ind2:end,ind1,10);
+x_12(1,:)=sol(ind1,ind2:end,11);
+x_12(:,1)=sol(ind2:end,ind1,11);
+x_13(1,:)=sol(ind1,ind2:end,12);
+x_13(:,1)=sol(ind2:end,ind1,12);
+x_22(1,:)=sol(ind1,ind2:end,13);
+x_22(:,1)=sol(ind2:end,ind1,13);
+x_23(1,:)=sol(ind1,ind2:end,14);
+x_23(:,1)=sol(ind2:end,ind1,14);
+x_33(1,:)=sol(ind1,ind2:end,15);
+x_33(:,1)=sol(ind2:end,ind1,15);
+
+% m_n(1,:)=fliplr(m_n(1,:));
+% m_n(:,1)=fliplr(m_n(:,1));
+% y_1(1,:)=fliplr(y_1(1,:));
+% y_1(:,1)=fliplr(y_1(:,1));
+% y_2(1,:)=fliplr(y_2(1,:));
+% y_2(:,1)=fliplr(y_2(:,1));
+% s_11(1,:)=fliplr(s_11(1,:));
+% s_11(:,1)=fliplr(s_11(:,1));
+% s_12(1,:)=fliplr(s_12(1,:));
+% s_12(:,1)=fliplr(s_12(:,1));
+% s_13(1,:)=fliplr(s_13(1,:));
+% s_13(:,1)=fliplr(s_13(:,1));
+% s_22(1,:)=fliplr(s_22(1,:));
+% s_22(:,1)=fliplr(s_22(:,1));
+% s_23(1,:)=fliplr(s_23(1,:));
+% s_23(:,1)=fliplr(s_23(:,1));
+% s_33(1,:)=fliplr(s_33(1,:));
+% s_33(:,1)=fliplr(s_33(:,1));
+% x_11(1,:)=fliplr(x_11(1,:));
+% x_11(:,1)=fliplr(x_11(:,1));
+% x_12(1,:)=fliplr(x_12(1,:));
+% x_12(:,1)=fliplr(x_12(:,1));
+% x_13(1,:)=fliplr(x_13(1,:));
+% x_13(:,1)=fliplr(x_13(:,1));
+% x_22(1,:)=fliplr(x_22(1,:));
+% x_22(:,1)=fliplr(x_22(:,1));
+% x_23(1,:)=fliplr(x_23(1,:));
+% x_23(:,1)=fliplr(x_23(:,1));
+% x_33(1,:)=fliplr(x_33(1,:));
+% x_33(:,1)=fliplr(x_33(:,1));
+
 hm=zeros(L1,L2);
 hy1=zeros(L1,L2);
 hy2=zeros(L1,L2);
@@ -279,7 +318,7 @@ for i=2:L1
         x33=x_33(i-1,j-1);
         del1=delta1(i);del2=delta2(j);
         J=eval(Jacob_F_V); Der_1=eval(Der_F_del1); Der_2=eval(Der_F_del2);
-        G=J\Der_1+J\Der_2
+        G=J\Der_1+J\Der_2;
         m_n(i,j)=m_n(i-1,j)+del_1*G(1)-del_1/del_2*(hm(i-1,j)-hm(i-1,j-1));
         y_1(i,j)=y_1(i-1,j)+del_1*G(2)-del_1/del_2*(hy1(i-1,j)-hy1(i-1,j-1));
         y_2(i,j)=y_2(i-1,j)+del_1*G(3)-del_1/del_2*(hy2(i-1,j)-hy2(i-1,j-1));
