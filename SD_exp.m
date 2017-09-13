@@ -72,14 +72,17 @@ S_sym = [s11 s12 s13;...
          s12 s22 s23;...
          s13 s23 s33];
 ndel=21;
-delta1=linspace(-0.05,0.05,ndel);
+delta1=linspace(0,0.1);
+%delta1=fliplr(linspace(-0.1,-0.05,ndel));
 max_sol=zeros(ndel,ndel);
 for n1=1:ndel
     del1=delta1(n1);
     n1
-    for n2=1:ndel
+   
+    for n2=1:1
         n2
-        del2=delta1(n2);
+        %del2=delta1(n2);
+        del2=0.01;
         eqn1 = m-(y1-4*y2)==0;
         eqn2 = trace((A1+del1*E11+del1*E21)*X_sym)-1==0;
         eqn3 = trace((A2+del2*E12+del2*E22)*X_sym)+4==0;
@@ -116,8 +119,8 @@ for n1=1:ndel
                 X=double([Sol_2.x11(i),Sol_2.x12(i), Sol_2.x13(i);...
                     Sol_2.x12(i),Sol_2.x22(i), Sol_2.x23(i);...
                     Sol_2.x13(i),Sol_2.x23(i), Sol_2.x33(i)]);
-                S_sdp=min(eig(S));
-                X_sdp=min(eig(X));
+                S_sdp=min(eig(S))
+                X_sdp=min(eig(X))
                 if ((X_sdp)>=-10^(-10))&&(S_sdp>=-10^(-10))
                     
                     sol_2(count)=M_2(i,1);
@@ -133,14 +136,20 @@ for n1=1:ndel
         %sol2=sol_2(find(sol_2(:,1)==max_sol),:);
     end
 end
-save('Ex2_sol.mat','sol')
+%%
+sol_extended=sol;
+delta_extended=delta1;
+ load('Ex2_sol.mat')
+save('Ex2_sol.mat','sol','sol_extended','delta_extended')
 %%
 figure(2)
 mesh(delta1,delta1,max_sol)
 %%
-load('Ex2_sol.mat')
-delta1=linspace(-0.05,0.05,21);
-figure(3)
+ load('Ex2_sol.mat')
+ delta1=linspace(-0.05,0.05,21);
+figure(4)
 surf(delta1,delta1,sol(:,:,1))
+xlabel('\delta_2')
+ylabel('\delta_1')
   
     
