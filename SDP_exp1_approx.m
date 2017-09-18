@@ -60,7 +60,7 @@ sol_d=sold(any(sold,2),:);
 %ind=any(sold,2);
 %delta1=delta(ind);
 
- startn=2000;
+ startn=1000;
   m_appx1(1)=sol_d(startn,1);
  s11_appx1(1)=sol_d(startn,3);
   s12_appx1(1)=sol_d(startn,4);
@@ -129,6 +129,15 @@ sol_d=sold(any(sold,2),:);
      x11_appx1(i+1)=x11_appx1(i)-0.5*del_v*(dx111_ddel(i)+dx111_ddel(i+1));
      x12_appx1(i+1)=x12_appx1(i)-0.5*del_v*(dx121_ddel(i)+dx121_ddel(i+1));
      x22_appx1(i+1)=x22_appx1(i)-0.5*del_v*(dx221_ddel(i)+dx221_ddel(i+1));
+     
+     S=[s11_appx1(i+1) s12_appx1(i+1);s12_appx1(i+1) s22_appx1(i+1)];
+     X=[x11_appx1(i+1) x12_appx1(i+1);x12_appx1(i+1) x22_appx1(i+1)];
+     S_min=min(eig(S));
+     X_min=min(eig(X));
+     if ((X_min)<-10^(-5)) || ((S_min)<-10^(-5))
+         i
+         break
+     end
  end
  %%
 
