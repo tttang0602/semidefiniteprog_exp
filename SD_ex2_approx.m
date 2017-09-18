@@ -1,4 +1,4 @@
-A1 = [2 4 -9; 4 10 -6; -9 -6 8];
+ A1 = [2 4 -9; 4 10 -6; -9 -6 8];
 A2 = [4 -6 4; -6 0 -7; 4 -7 4];
 C  = [-8 2 8; 2 2 6; 8 6 0];
 D1 = [4 5 2; 5 -8 0; 2 0 -6];
@@ -143,8 +143,8 @@ load('Ex2_sol.mat')
 %load('Ex2_sol_fine.mat')
 %%
 
-delta1=(-0.05:0.005:0.05);
-delta2=(-0.05:0.005:0.05);
+delta1=(-0.0:0.005:0.05);
+delta2=(-0.0:0.005:0.05);
 del_1=delta1(2)-delta1(1);
 del_2=delta2(2)-delta2(1);
 L1=length(delta1);
@@ -155,7 +155,7 @@ y_2=zeros(L1,L2);
 x_11=zeros(L1,L2);
 x_12=zeros(L1,L2);
 x_13=zeros(L1,L2);
-x_22=zeros(L1,L2);z`
+x_22=zeros(L1,L2);
 x_23=zeros(L1,L2);
 x_33=zeros(L1,L2);
 s_11=zeros(L1,L2);
@@ -164,14 +164,16 @@ s_13=zeros(L1,L2);
 s_22=zeros(L1,L2);
 s_23=zeros(L1,L2);
 s_33=zeros(L1,L2);
-ind1=1;ind2=1;
+ind1=11;ind2=11;
 %Scheme boundary delta1(ind1) with delta2(ind2:end) and delta2(ind1) with
 %delta1(ind2:end)
-%sol=zeros(L1,L2,15);
-%sol(1,:,:)=sol_del2(1,:,:);
-%sol(:,1,:)=sol_del1(:,1,:);
+% sol=zeros(L1,L2,15);
+% sol(1,:,:)=sol_0_del2(1,51:end,:);
+% sol(:,1,:)=sol_del1_0(51:end,1,:);
+
 m_n(1,:)=sol(ind1,ind2:end,1);
 m_n(:,1)=sol(ind2:end,ind1,1);
+
 y_1(1,:)=sol(ind1,ind2:end,2);
 y_1(:,1)=sol(ind2:end,ind1,2);
 y_2(1,:)=sol(ind1,ind2:end,3);
@@ -334,9 +336,21 @@ for i=2:L1
         s_22(i,j)=s_22(i-1,j)+del_1*G(13)-del_1/del_2*(hs22(i-1,j)-hs22(i-1,j-1));
         s_23(i,j)=s_23(i-1,j)+del_1*G(14)-del_1/del_2*(hs23(i-1,j)-hs23(i-1,j-1));
         s_33(i,j)=s_33(i-1,j)+del_1*G(15)-del_1/del_2*(hs33(i-1,j)-hs33(i-1,j-1));
+        X=[x_11 x_12 x_13;...
+           x_12 x_22 x_23;...
+           x_13 x_23 x_33];
+        S=[s_11 s_12 s_13;...
+           s_12 s_22 s_23;...
+           s_13 s_23 s_33];
+        X_min=min(eig(X)); 
+        S_min=min(eig(S));
+        if (S_min<0) || (X_min<0)
+            index = [i,j]
+            break
+        end
     end
 end
 %%
 figure
-surf(delta1,delta2,m_n)
+surf(delta2,delta1,m_n)
     
