@@ -93,7 +93,7 @@ sol_d=sold(any(sold,2),:);
      
      
      
-     del=del_v;
+     del=del_app(i+1);
      m=m_appx1(i+1);
      y=m;
      s11=s11_appx1(i+1);
@@ -134,10 +134,10 @@ sol_d=sold(any(sold,2),:);
      X=[x11_appx1(i+1) x12_appx1(i+1);x12_appx1(i+1) x22_appx1(i+1)];
      S_min=min(eig(S));
      X_min=min(eig(X));
-     if ((X_min)<-10^(-5)) || ((S_min)<-10^(-5))
-         i
-         break
-     end
+%      if ((X_min)<-10^(-5)) || ((S_min)<-10^(-5))
+%          i
+%          break
+%      end
  end
  %%
 
