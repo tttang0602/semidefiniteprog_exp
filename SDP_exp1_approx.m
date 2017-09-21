@@ -32,6 +32,7 @@ delta_v=delta(2)-delta(1);
     %dm=-Inv_1*Jacob_F_del;
     dm=Jacob_F_V\Jacob_F_del;
     dm_ddelta(i)=double(dm(1));
+    dy_ddelta(i)=double(dm(2));
     ds11_ddel(i)=double(dm(3));
     ds12_ddel(i)=double(dm(4));
     ds22_ddel(i)=double(dm(5));
@@ -42,6 +43,7 @@ delta_v=delta(2)-delta(1);
  
  
  m_appx(1)=sol_d(end,1);
+ y_appx(1)=sol_d(end,2);
  s11_appx(1)=sol_d(end,3);
   s12_appx(1)=sol_d(end,4);
  s22_appx(1)=sol_d(end,5);
@@ -52,16 +54,17 @@ delta_v=delta(2)-delta(1);
 save('Exl_Der.mat','*del*')
  
  %%
-clear all
+clear all 
+
  syms del s11 s12 s22 x11 x12 x22 y m
 load('Ex1_Sol.mat')
 load('Exl_Der.mat')
 sol_d=sold(any(sold,2),:);
 %ind=any(sold,2);
 %delta1=delta(ind);
-
- startn=1000;
+startn=1000;
   m_appx1(1)=sol_d(startn,1);
+  y_appx1(1)=sol_d(startn,2);
  s11_appx1(1)=sol_d(startn,3);
   s12_appx1(1)=sol_d(startn,4);
  s22_appx1(1)=sol_d(startn,5);
@@ -69,6 +72,8 @@ sol_d=sold(any(sold,2),:);
  x12_appx1(1)=sol_d(startn,7);
  x22_appx1(1)=sol_d(startn,8);
  dm_ddelta1(1)=dm_ddelta(startn);
+ dy_ddelta1(i)=dy_ddelta(startn);
+ 
  ds111_ddel(1)=ds11_ddel(startn);
  ds121_ddel(1)=ds12_ddel(startn);
  ds221_ddel(1)=ds22_ddel(startn);
@@ -77,13 +82,14 @@ sol_d=sold(any(sold,2),:);
  dx221_ddel(1)=dx22_ddel(startn);
 
  k=startn*10+150;
- del_app=zeros(k,1);
+ %del_app=zeros(k,1);
  del_app(1)=delta(startn);
  del_v=0.0001;
  %%
  for i=1:k
      del_app(i+1)=delta(startn)-i*del_v;
      m_appx1(i+1)=m_appx1(i)-del_v*dm_ddelta1(i);
+     y_appx1(i+1)=y_appx1(i)-del_v*dy_ddelta1(i);
      s11_appx1(i+1)=s11_appx1(i)-del_v*ds111_ddel(i);
      s12_appx1(i+1)=s12_appx1(i)-del_v*ds121_ddel(i);
      s22_appx1(i+1)=s22_appx1(i)-del_v*ds221_ddel(i);
@@ -95,7 +101,7 @@ sol_d=sold(any(sold,2),:);
      
      del=del_app(i+1);
      m=m_appx1(i+1);
-     y=m;
+     y=y_appx1(i+1);
      s11=s11_appx1(i+1);
      s12=s12_appx1(i+1);
      s22=s22_appx1(i+1);
@@ -112,9 +118,9 @@ sol_d=sold(any(sold,2),:);
                 0 0 0 x12 x22 0 s12 s22];
 
     Jacob_F_del=[0;x11-4*x12-3*x22; y+2; 2*y-1; 3*y+3; 0; 0; 0];        
-    Inv_1=inv(Jacob_F_V);
-    dm=-Inv_1*Jacob_F_del;
+    dm=-Jacob_F_V\Jacob_F_del;
     dm_ddelta1(i+1)=double(dm(1));
+    dy_ddelta1(i+1)=double(dm(2));
     ds111_ddel(i+1)=double(dm(3));
     ds121_ddel(i+1)=double(dm(4));
     ds221_ddel(i+1)=double(dm(5));
@@ -123,7 +129,9 @@ sol_d=sold(any(sold,2),:);
     dx221_ddel(i+1)=double(dm(8));
     
     m_appx1(i+1)=m_appx1(i)-0.5*del_v*(dm_ddelta1(i)+dm_ddelta1(i+1));
-     s11_appx1(i+1)=s11_appx1(i)-0.5*del_v*(ds111_ddel(i)+ds111_ddel(i+1));
+    y_appx1(i+1)=y_appx1(i)-0.5*del_v*(dy_ddelta1(i)+dy_ddelta1(i+1));
+    
+    s11_appx1(i+1)=s11_appx1(i)-0.5*del_v*(ds111_ddel(i)+ds111_ddel(i+1));
      s12_appx1(i+1)=s12_appx1(i)-0.5*del_v*(ds121_ddel(i)+ds121_ddel(i+1));
      s22_appx1(i+1)=s22_appx1(i)-0.5*del_v*(ds221_ddel(i)+ds221_ddel(i+1));
      x11_appx1(i+1)=x11_appx1(i)-0.5*del_v*(dx111_ddel(i)+dx111_ddel(i+1));
@@ -134,17 +142,20 @@ sol_d=sold(any(sold,2),:);
      X=[x11_appx1(i+1) x12_appx1(i+1);x12_appx1(i+1) x22_appx1(i+1)];
      S_min=min(eig(S));
      X_min=min(eig(X));
-%      if ((X_min)<-10^(-5)) || ((S_min)<-10^(-5))
-%          i
-%          break
-%      end
+     Err(i)=x11_appx1(i+1)*s11_appx1(i+1)+x12_appx1(i+1)*s12_appx1(i+1);
+     Err1(i)=1+2*y_appx1(i+1)-s11_appx1(i+1)+del*(2+y_appx1(i+1));
+     
+     if ((X_min)<-10^(-5)) || ((S_min)<-10^(-5))
+         i
+         break
+     end
  end
  %%
 
  figure 
- plot(del_app,m_appx1,'LineWidth',2)
+ plot(del_app,y_appx1,'LineWidth',2)
  hold on
- plot(delta(1:startn),sol_d(1:startn,1),'LineWidth',2)
+ plot(delta(1:startn),sol_d(1:startn,2),'LineWidth',2)
  legend('Appriximation','Feasible solution')
  title(['\delta_0=',num2str(delta(startn))])  
  
