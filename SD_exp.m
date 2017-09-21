@@ -71,18 +71,17 @@ X_sym = [x11 x12 x13;...
 S_sym = [s11 s12 s13;...
          s12 s22 s23;...
          s13 s23 s33];
-ndel=21;
-delta1=linspace(0,0.1);
+ndel=51;
+delta1=linspace(0.0,0.5,51);
 %delta1=fliplr(linspace(-0.1,-0.05,ndel));
 max_sol=zeros(ndel,ndel);
 for n1=1:ndel
     del1=delta1(n1);
     n1
-   
-    for n2=1:1
+    for n2=1:ndel
         n2
-        %del2=delta1(n2);
-        del2=0.01;
+        del2=delta1(n2);
+        
         eqn1 = m-(y1-4*y2)==0;
         eqn2 = trace((A1+del1*E11+del1*E21)*X_sym)-1==0;
         eqn3 = trace((A2+del2*E12+del2*E22)*X_sym)+4==0;
@@ -130,11 +129,13 @@ for n1=1:ndel
             end
 
         end
+        
         max_sol(n1,n2)=max(sol_2);
         ind=find(sol_2==max_sol(n1,n2));
         sol(n1,n2,:)=sol_full(ind,:);
         %sol2=sol_2(find(sol_2(:,1)==max_sol),:);
     end
+    
 end
 %%
 sol_extended=sol;
