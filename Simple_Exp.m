@@ -1,39 +1,54 @@
 clear all
-delta=0.01;
-del=-2:delta:-0.9;
-dell(1)=-2;
+
+%Example 1D
+% delta=0.01;
+% del=-2:delta:-0.9;
+% dell(1)=-2;
+% N=length(del);
+% y(1)=(-1-del(1))^(1/2);
+
+%Example 2D====
+delta=0.001;
+del=-1:delta:-0.;
+dell(1)=-1;
 N=length(del);
-y(1)=(-1-del(1))^(1/2);
+y(1)=(-1-2*del(1))^(1/2);
+
 %%===For function y^2+1+\delta=0===
+%Eg 1D
+%f=@(x,y)-1/(2*y);
 
-f=@(x,y)-1/(2*y);
-
-
+%Eg 2D
+f=@(x,y)-1/y;
+g=@(x,y)(-1-x-y)^(1/2);
 %%
 %%===Euler Method====
 for i=1:N
     y(i+1)=y(i)+f(del(i),y(i));
+    sol=g(del(i),del(i));
 end
 figure(4)
-plot([del, del(end)+delta],y)
+plot(del,y)
 hold on
-plot(del,(-1-del).^(1/2))
+plot(del,sol)
 
 
 %%
 %%===Modified Euler method=====
 
-for i=1:N
-    y(i+1)=y(i)+delta*(-1/2*1/(y(i)));
-    y(i+1)=y(i)+1/2*delta*(-1/2*1/(y(i))-1/2*1/(y(i+1)));
-    dell(i+1)=dell(i)+delta;
+for i=1:N-1
+    y(i+1)=y(i)+delta*f(del(i),y(i));
+    y(i+1)=y(i)+1/2*delta*(f(del(i),y(i))+f(del(i+1),y(i+1)));
+    
+    sol(i)=g(del(i),del(i));
 end
-ind=find(del==-1);
 
 figure(1)
-plot(dell,y)
+plot(del,y)
 hold on
-plot(del(1:ind),(-1-del(1:ind)).^(1/2))
+plot(del(1:N-1), sol,'r--')
+legend('Approx','Exact')
+%plot(del(1:ind),(-1-del(1:ind)).^(1/2))
 %%
 %%======Third Order Runge Kutta Method====
 for i=1:N
