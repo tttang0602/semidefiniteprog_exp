@@ -1,7 +1,7 @@
 clear sol
 syms m y s11 s12 s22 x11 x12 x22
 
-delta=-0.55:0.0025:-0.3;
+delta=-0.49:0.001:0;
 num=length(delta);
 %sol=zeros(num,1);
 for n = 1:num
@@ -40,7 +40,7 @@ for n = 1:num
     end
 end
 sold=double(sol);
-save('Ex1_Sol_fine.mat','sold','delta')
+%save('Ex1_Sol_fine.mat','sold','delta')
 %%
 figure(1)
 subplot(1,2,1)
@@ -72,19 +72,19 @@ S_sym = [s11 s12 s13;...
          s12 s22 s23;...
          s13 s23 s33];
 ndel=51;
-delta1=linspace(0.0,0.5,51);
+delta1=linspace(0,0.05,ndel);
 %delta1=fliplr(linspace(-0.1,-0.05,ndel));
 max_sol=zeros(ndel,ndel);
 for n1=1:ndel
     del1=delta1(n1);
-    n1
+    n1 
     for n2=1:ndel
         n2
         del2=delta1(n2);
         
         eqn1 = m-(y1-4*y2)==0;
-        eqn2 = trace((A1+del1*E11+del1*E21)*X_sym)-1==0;
-        eqn3 = trace((A2+del2*E12+del2*E22)*X_sym)+4==0;
+        eqn2 = trace((A1+del1*E11+del2*E21)*X_sym)-1==0;
+        eqn3 = trace((A2+del1*E12+del2*E22)*X_sym)+4==0;
         matr_stat = C-(y1*A1+y2*A2)+del1*(D1-y1*E11-y2*E12)+del2*(D2-y1*E21-y2*E22)-S_sym;
         eqn4 = matr_stat(1,1)==0;
         eqn5 = matr_stat(1,2)==0;
@@ -118,13 +118,13 @@ for n1=1:ndel
                 X=double([Sol_2.x11(i),Sol_2.x12(i), Sol_2.x13(i);...
                     Sol_2.x12(i),Sol_2.x22(i), Sol_2.x23(i);...
                     Sol_2.x13(i),Sol_2.x23(i), Sol_2.x33(i)]);
-                S_sdp=min(eig(S))
-                X_sdp=min(eig(X))
+                S_sdp=min(eig(real(S)));
+                X_sdp=min(eig(real(X)));
                 if ((X_sdp)>=-10^(-10))&&(S_sdp>=-10^(-10))
                     
                     sol_2(count)=M_2(i,1);
                     sol_full(count,:)=M_2(i,:);
-                    count=count+1;
+                    count=count+1
                 end
             end
 
@@ -137,11 +137,9 @@ for n1=1:ndel
     end
     
 end
+sol_del1=sol;
 %%
-sol_extended=sol;
-delta_extended=delta1;
- load('Ex2_sol.mat')
-save('Ex2_sol.mat','sol','sol_extended','delta_extended')
+save('Ex2_sol_001.mat','sol','delta1')
 %%
 figure(2)
 mesh(delta1,delta1,max_sol)
