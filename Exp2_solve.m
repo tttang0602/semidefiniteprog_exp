@@ -1,6 +1,7 @@
 function [sol,All]=Exp2_solve(delta1,delta2)
 
 %delta1=-0.045;delta2=0.045;
+
 A1 = [2 4 -9; 4 10 -6; -9 -6 8];
 A2 = [4 -6 4; -6 0 -7; 4 -7 4];
 C  = [-8 2 8; 2 2 6; 8 6 0];
@@ -47,27 +48,28 @@ eqn15 = matr_comp(3,3)==0;
 
 
 
+
 eqns=[eqn1,eqn2,eqn3,eqn4,eqn5,eqn6,eqn7,eqn8,eqn9,eqn10,eqn11,eqn12,eqn13,eqn14,eqn15];
 vars=[m y1 y2 s11 s12 s13 s22 s23 s33 x11 x12 x13 x22 x23 x33];
 Sol_2=solve(eqns,vars);
 
-N = size(Sol_2.m);
+
 M_2=double([Sol_2.m,Sol_2.y1,Sol_2.y2,...
     Sol_2.s11,Sol_2.s12,Sol_2.s13,Sol_2.s22,Sol_2.s23,Sol_2.s33,...
     Sol_2.x11,Sol_2.x12,Sol_2.x13,Sol_2.x22,Sol_2.x23,Sol_2.x33]);
 count=1;
-
+N = size(M_2,1);
 for i = 1:N
-    if abs(imag(M_2(i,1)))<=10^(-15)
+    if abs(imag(M_2(i,1)))<10^(-20)
         
-        S=double([Sol_2.s11(i),Sol_2.s12(i), Sol_2.s13(i);...
+        S=real(double([Sol_2.s11(i),Sol_2.s12(i), Sol_2.s13(i);...
             Sol_2.s12(i),Sol_2.s22(i), Sol_2.s23(i);...
-            Sol_2.s13(i),Sol_2.s23(i), Sol_2.s33(i)]);
-        X=double([Sol_2.x11(i),Sol_2.x12(i), Sol_2.x13(i);...
+            Sol_2.s13(i),Sol_2.s23(i), Sol_2.s33(i)]));
+        X=real(double([Sol_2.x11(i),Sol_2.x12(i), Sol_2.x13(i);...
             Sol_2.x12(i),Sol_2.x22(i), Sol_2.x23(i);...
-            Sol_2.x13(i),Sol_2.x23(i), Sol_2.x33(i)]);
-        S_sdp=min(eig(S));
-        X_sdp=min(eig(X));
+            Sol_2.x13(i),Sol_2.x23(i), Sol_2.x33(i)]));
+        S_sdp=min(eig((S)));
+        X_sdp=min(eig((X)));
         if ((X_sdp)>=-10^(-10))&&(S_sdp>=-10^(-10))
             
             sol_2(count)=M_2(i,1);
@@ -77,9 +79,10 @@ for i = 1:N
     end
     
 end
+count
 if exist('sol_2','var')
     
-    max_sol=max(sol_2);
+    max_sol=max(sol_2)
     ind=find(sol_2==max_sol);
     sol=sol_full(ind,:);
 else
